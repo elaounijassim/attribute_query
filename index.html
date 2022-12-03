@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"> 
+<head> 
+<title>Requete attributaire</title> 
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.0/dist/leaflet.css" />
+<link rel="stylesheet" href="src/leaflet-search.css" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div id="map"></div>
+<center><h2>Recherche des hopitaux </h2></center>
+<center><b>Veuillez recherher les hopitaux par nom</b></center>
+<center><b>Vous allez être diriger vers l'hôpital choisi</b></center>
+                    
+                    
+<script src="https://unpkg.com/requirejs@2.2.0/require.js"></script>
+<script>
+require.config({
+	paths: {
+	    "leaflet": "https://unpkg.com/leaflet@1.3.0/dist/leaflet",
+	    "leafletSearch": "src/leaflet-search",
+	    "data": "data/colors"
+	},
+	shim: {
+		"leaflet-search": ["leaflet"]
+	}
+});
+require(["leaflet", "leafletSearch", "data"],function(L, LeafletSearch, Data) {
+	const map = L.map('map').setView([28.98, -10.07], 5);
+                        const tiles = L.tileLayer('https://api.mapbox.com/styles/v1/elaounijassim/claz9neo300li14mpxy0alzzo/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiZWxhb3VuaWphc3NpbSIsImEiOiJjbGF5ZmswaXIwNzhvM3FtbHhiZ2o3eG94In0.2D5g4-DntItXKK1ylEJsrQ', {
+                            maxZoom: 19,
+                            attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>"
+                        }).addTo(map);
+	var markers = Data.map(function(row) {
+		return L.marker(row.loc, {title: row.title }).bindPopup( row.title );
+	});
+	//console.log(new LeafletSearch());
+	new LeafletSearch({
+		layer: L.layerGroup(markers).addTo(map),
+		initial: false,
+		zoom: 12
+	}).addTo(map);
+});
+</script>
+
+
+</body>
+</html>
